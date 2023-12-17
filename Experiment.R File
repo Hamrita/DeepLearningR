@@ -9,7 +9,7 @@ FLAGS <- flags(flag_integer('dense_units', 32),
 # Model
 model <- keras_model_sequential() %>%
   layer_lstm(units=128, input_shape=c(step, 1), activation=FLAGS$activ1) %>%
-  layer_dense(units=64, activation = FLAGS$activ1) %>%
+  layer_dense(units=FLAGS$dens_units, activation = FLAGS$activ1) %>%
   layer_dense(units=FLAGS$dense_units) %>%
   layer_dense(units=1, activation = FLAGS$activ2)
 
