@@ -1,24 +1,24 @@
 # Flags
-FLAGS <- flags(flag_integer('dense_units', 32))
-
+FLAGS <- flags(flag_integer('dense_units', 32),
+               flag_string("activ1","relu"),
+               flag_string("activ2","linear"),
+               flag_numeric("lr", 0.001),
+               flag_numeric("epo",50),
+               flag_numeric("batchSize",32))
+)
 # Model
-model <- keras_model_sequential() %>% 
-         layer_dense(units = FLAGS$dense_units, 
-                     activation = 'relu',
-                     input_shape = c(21)) %>% 
-         layer_dropout(rate = 0.1) %>% 
-         layer_dense(units = 16,
-                     activation = 'relu') %>% 
-         layer_dropout(rate = 0.1) %>% 
-         layer_dense(units = 3, activation = 'softmax')
-# Compile
-model %>% compile(loss = 'categorical_crossentropy',
-                  optimizer = 'adam',
-                  metrics = 'accuracy')
+model <- keras_model_sequential() %>%
+  layer_lstm(units=128, input_shape=c(step, 1), activation=FLAGS$activ1) %>%
+  layer_dense(units=64, activation = FLAGS$activ1) %>%
+  layer_dense(units=FLAGS$dense_units) %>%
+  layer_dense(units=1, activation = FLAGS$activ2)
+
+# compile
+model %>% compile(loss = 'mse',
+                  optimizer =optimizer_adam(learning_rate=FLAGS$lr),
+                  metrics = list("mean_absolute_error")
+                   )
+
 # Fit
-history <- model %>% 
-         fit(training,
-             trainLabels,
-             epochs = 50,
-             batch_size = 32,
-             validation_split = 0.2)
+history <- model %>% fit(X,y, epochs=FLAGS$epo, batch_size=FLAGS$batchSize, 
+           shuffle = FALSE, validation_split=0.2)
