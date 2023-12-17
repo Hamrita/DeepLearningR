@@ -4,7 +4,7 @@ FLAGS <- flags(flag_integer('dense_units', 32),
                flag_string("activ2","linear"),
                flag_numeric("lr", 0.001),
                flag_numeric("epo",50),
-               flag_numeric("batchSize",32))
+               flag_integer("batchSize",32))
 )
 # Model
 model <- keras_model_sequential() %>%
